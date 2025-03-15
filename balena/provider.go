@@ -1,12 +1,18 @@
 package balena
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"os"
 	"path/filepath"
 	"strings"
+)
+
+var (
+	client APIClient
 )
 
 func getBalenaTokenDir() string {
@@ -64,8 +70,41 @@ func Provider() *schema.Provider {
 			"use_env_var": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				DefaultFunc: schema.EnvDefaultFunc("BALENA_API_KEY", nil),
 			},
 		},
+
+		DataSourcesMap: map[string]*schema.Resource{
+			"balena_fleet": dataSourceFleet(),
+		},
+		ConfigureContextFunc: providerConfigure,
 	}
+}
+
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	var balenaUrl = d.Get("balena_url").(string)
+	var balenaUseEnvVar = d.Get("use_env_var").(bool)
+	var balenaTokenPath = d.Get("balena_token_path").(string)
+	fmt.Print(balenaUrl)
+	fmt.Print(balenaTokenPath)
+
+	var token string
+
+	if balenaUseEnvVar {
+		apiKey, exists := os.LookupEnv("BALENA_API_KEY")
+		if !exists {
+			return nil, diag.Errorf("`BALENA_API_KEY` environment variable not set")
+		}
+		token = apiKey
+	} else {
+		contents, err := os.ReadFile(balenaTokenPath)
+		if err != nil {
+			return nil, diag.Errorf("failed to read balena token file: %s", err)
+		}
+		token = string(contents)
+	}
+
+	NewAPIClient(balenaUrl, "Authorization", fmt.Sprintf("Bearer %s", token))
+	return nil, nil
 }
