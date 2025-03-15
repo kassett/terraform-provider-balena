@@ -16,6 +16,6 @@ func main() {
 		ProviderFunc: balena.Provider,
 		Debug:        debugMode,
 	}
-	
+
 	plugin.Serve(&opts)
 }

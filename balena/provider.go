@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	client APIClient
+	client *APIClient
 )
 
 func getBalenaTokenDir() string {
@@ -25,12 +25,12 @@ type APIClient struct {
 }
 
 // NewAPIClient initializes a new API client with a global header
-func NewAPIClient(baseURL, headerKey, headerValue string) *APIClient {
-	client := resty.New().
+func NewAPIClient(baseURL, headerKey, headerValue string) {
+	c := resty.New().
 		SetBaseURL(baseURL).
 		SetHeader(headerKey, headerValue) // Set global header
 
-	return &APIClient{client: client}
+	client = &APIClient{client: c}
 }
 
 func Provider() *schema.Provider {
@@ -106,5 +106,14 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	}
 
 	NewAPIClient(balenaUrl, "Authorization", fmt.Sprintf("Bearer %s", token))
+
+	res, err := client.client.R().Get("v7/organization")
+	if err != nil {
+		return nil, diag.Errorf("there was an error connecting to balena: %s", err)
+	} else if res.StatusCode() == 401 || res.StatusCode() == 403 {
+		return nil, diag.Errorf("%d", res.StatusCode())
+		//return nil, diag.Errorf("the provided credentials are not valid")
+	}
+
 	return nil, nil
 }
