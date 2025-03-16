@@ -15,6 +15,7 @@ func main() {
 	opts := plugin.ServeOpts{
 		ProviderFunc: balena.Provider,
 		Debug:        debugMode,
+		ProviderAddr: "registry.terraform.io/kassett/balena",
 	}
 
 	plugin.Serve(&opts)

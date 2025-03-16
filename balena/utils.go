@@ -16,3 +16,15 @@ func flattenJSON(m map[string]interface{}) map[string]interface{} {
 	}
 	return o
 }
+
+type IDWrapper struct {
+	ID int `json:"__id"`
+}
+
+type BalenaListResponse struct {
+	Data []map[string]interface{} `json:"d"`
+}
+
+type BalenaSingleResponse struct {
+	Data map[string]interface{} `json:"d"`
+}
