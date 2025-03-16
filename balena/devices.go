@@ -20,10 +20,10 @@ type Device struct {
 	PublicAddress         string    `json:"public_address"`
 	SupervisorVersion     string    `json:"supervisor_version"`
 	OsVersion             string    `json:"os_version"`
-	Longitude             float64   `json:"longitude"`
-	Latitude              float64   `json:"latitude"`
-	CustomLongitude       *float64  `json:"custom_longitude"`
-	CustomerLatitude      *float64  `json:"custom_latitude"`
+	Longitude             string    `json:"longitude"`
+	Latitude              string    `json:"latitude"`
+	CustomLongitude       string    `json:"custom_longitude"`
+	CustomerLatitude      string    `json:"custom_latitude"`
 	DeviceTypeId          IDWrapper `json:"is_of__device_type"`
 	FleetId               IDWrapper `json:"belongs_to__application"`
 	Description           string    `json:"note"`
@@ -60,7 +60,7 @@ func getDeviceDataSourceSchema() map[string]*schema.Schema {
 		},
 		"mac_addresses": {
 			Type: schema.TypeList,
-			Elem: schema.Schema{
+			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 			Computed: true,
@@ -78,20 +78,20 @@ func getDeviceDataSourceSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 		"longitude": {
-			Type:     schema.TypeFloat,
+			Type:     schema.TypeString,
 			Computed: true,
 		},
 		"latitude": {
-			Type:     schema.TypeFloat,
+			Type:     schema.TypeString,
 			Computed: true,
 		},
 		"custom_longitude": {
-			Type:     schema.TypeFloat,
+			Type:     schema.TypeString,
 			Computed: true,
 			Optional: true,
 		},
 		"custom_latitude": {
-			Type:     schema.TypeFloat,
+			Type:     schema.TypeString,
 			Computed: true,
 			Optional: true,
 		},

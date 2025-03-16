@@ -108,12 +108,11 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 
 	NewAPIClient(balenaUrl, "Authorization", fmt.Sprintf("Bearer %s", token))
 
-	res, err := client.client.R().Get("v7/organization")
+	res, err := client.client.R().Get("/v7/organization")
 	if err != nil {
 		return nil, diag.Errorf("there was an error connecting to balena: %s", err)
 	} else if res.StatusCode() == 401 || res.StatusCode() == 403 {
-		return nil, diag.Errorf("%d", res.StatusCode())
-		//return nil, diag.Errorf("the provided credentials are not valid")
+		return nil, diag.Errorf("the credentials for the Balena provider may need to be refreshed")
 	}
 
 	return nil, nil
