@@ -76,9 +76,14 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"balena_fleet":    dataSourceFleet(),
-			"balena_device":   dataSourceDevice(),
-			"balena_services": dataSourceServices(),
+			"balena_fleet":                    dataSourceFleet(),
+			"balena_device":                   dataSourceDevice(),
+			"balena_services":                 dataSourceServices(),
+			"balena_fleet_variables":          dataSourceFleetVariables(),
+			"balena_fleet_variable":           dataSourceFleetVariable(),
+			"balena_fleet_variable_as_secret": dataSourceFleetVariableSecret(),
+			"balena_service_variables":        dataSourceServiceVariables(),
+			//"balena_device_variables":  dataSourceDeviceVariables(), // TODO Figure out the correct hierarchy of variables
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

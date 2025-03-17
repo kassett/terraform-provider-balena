@@ -10,15 +10,32 @@ terraform {
 }
 
 data "balena_fleet" "this" {
-  slug = "tagup/stage-router"
+  slug = "tagup/edge2-prod-revpi"
+}
+
+data "balena_fleet_variables" "this" {
+  fleet_id = data.balena_fleet.this.fleet_id
 }
 
 data "balena_device" "this" {
   uuid = "6ac8cf056c432579b2c8fd62a183e264"
 }
 
+data "balena_fleet_variable" "this" {
+  fleet_id = data.balena_fleet.this.fleet_id
+  variable_name = "EDGE2_USING_DATA_PRODUCER"
+}
+
+# data "balena_device_variables" "this" {
+#   device_uuid = data.balena_device.this.uuid
+# }
+
 data "balena_services" "this" {
   fleet_id = data.balena_fleet.this.fleet_id
+}
+
+data "balena_service_variables" "this" {
+  service_id = data.balena_services.this.services[0].service_id
 }
 
 output "fleet_attributes" {
@@ -31,4 +48,20 @@ output "device_attributes" {
 
 output "balena_services_attributes" {
   value = data.balena_services.this
+}
+
+output "balena_fleet_variables" {
+  value = data.balena_fleet_variables.this.variables
+}
+
+# output "balena_device_variables" {
+#   value = data.balena_device_variables.this.variables
+# }
+
+output "balena_service_variables" {
+  value = data.balena_service_variables.this.variables
+}
+
+output "balena_fleet_variable" {
+  value = data.balena_fleet_variable.this.value
 }
