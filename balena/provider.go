@@ -76,8 +76,9 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"balena_fleet":  dataSourceFleet(),
-			"balena_device": dataSourceDevice(),
+			"balena_fleet":    dataSourceFleet(),
+			"balena_device":   dataSourceDevice(),
+			"balena_services": dataSourceServices(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

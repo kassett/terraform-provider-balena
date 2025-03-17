@@ -183,12 +183,20 @@ func GetDeviceDataSource(_ context.Context, d *schema.ResourceData, _ interface{
 			_ = d.Set("custom_longitude", device.CustomLongitude)
 		case "custom_latitude":
 			_ = d.Set("custom_latitude", device.CustomerLatitude)
+		case "os_version":
+			_ = d.Set("os_version", device.OsVersion)
+		case "supervisor_version":
+			_ = d.Set("supervisor_version", device.SupervisorVersion)
+		case "public_ip_address":
+			_ = d.Set("public_ip_address", device.PublicAddress)
 		case "description":
 			_ = d.Set("description", device.Description)
 		case "fleet_id":
 			_ = d.Set("fleet_id", device.FleetId)
 		case "running_release_id":
 			_ = d.Set("running_release_id", device.RunningReleaseId)
+		case "device_type_id":
+			_ = d.Set("device_type_id", device.DeviceTypeId.ID)
 		case "pinned_release_id":
 			_ = d.Set("pinned_release_id", device.PinnedReleaseId)
 		default:

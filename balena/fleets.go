@@ -157,6 +157,8 @@ func GetFleetDataSource(_ context.Context, d *schema.ResourceData, _ interface{}
 			_ = d.Set("track_latest_release", fleet.TrackLatestRelease)
 		case "release_id":
 			_ = d.Set("release_id", fleet.ReleaseId.ID)
+		case "uuid":
+			_ = d.Set("uuid", fleet.Uuid)
 		default:
 			return diag.Errorf("unhandled data source attribute: %s", dataSourceAttribute)
 		}
