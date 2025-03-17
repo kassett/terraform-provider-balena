@@ -125,7 +125,7 @@ func GetFleetDataSource(_ context.Context, d *schema.ResourceData, _ interface{}
 	if d.Get("slug").(string) != "" && d.Get("fleet_id").(int) != -1 {
 		return diag.Errorf("only one of id or slug can be specified")
 	} else if d.Get("slug").(string) == "" && d.Get("fleet_id").(int) == -1 {
-		return diag.Errorf("either id or slug must be specified")
+		return diag.Errorf("either fleet_id or slug must be specified")
 	}
 
 	fleet, err := DescribeFleet(d.Get("slug").(string), d.Get("fleet_id").(int))

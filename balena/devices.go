@@ -192,7 +192,7 @@ func GetDeviceDataSource(_ context.Context, d *schema.ResourceData, _ interface{
 		case "description":
 			_ = d.Set("description", device.Description)
 		case "fleet_id":
-			_ = d.Set("fleet_id", device.FleetId)
+			_ = d.Set("fleet_id", device.FleetId.ID)
 		case "running_release_id":
 			_ = d.Set("running_release_id", device.RunningReleaseId)
 		case "device_type_id":

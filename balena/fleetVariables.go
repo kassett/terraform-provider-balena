@@ -25,7 +25,7 @@ func dataSourceFleetVariable() *schema.Resource {
 	}
 }
 
-func dataSourceFleetVariableSecret() *schema.Resource {
+func dataSourceFleetVariableSensitive() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetVariableDataSource,
 		Schema:      getFleetVariableDataSourceSchema(true),
