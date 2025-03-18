@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// ServiceVariable is the format that service variables are returned
+// from the Balena API
 type ServiceVariable struct {
 	Id      int    `json:"id"`
 	Name    string `json:"name"`
@@ -15,10 +17,12 @@ type ServiceVariable struct {
 	Created string `json:"created_at"`
 }
 
+// ServiceVariableResponse -- Balena wraps all responses in the key `d`
 type ServiceVariableResponse struct {
 	ServiceVariables []ServiceVariable `json:"d"`
 }
 
+// dataSourceServiceVariable the schema of a single service variable
 func dataSourceServiceVariable() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariableDataSource,
@@ -26,6 +30,7 @@ func dataSourceServiceVariable() *schema.Resource {
 	}
 }
 
+// dataSourceServiceVariableSensitive the schema of a single service variable with a sensitive value
 func dataSourceServiceVariableSensitive() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariableDataSource,
@@ -33,6 +38,7 @@ func dataSourceServiceVariableSensitive() *schema.Resource {
 	}
 }
 
+// dataSourceServiceVariables returns all environment variables of a service
 func dataSourceServiceVariables() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariablesDataSource,
@@ -40,6 +46,7 @@ func dataSourceServiceVariables() *schema.Resource {
 	}
 }
 
+// getServiceVariablesDataSourceSchema the schema for the `balena_service_variables` data source
 func getServiceVariablesDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"service_id": {
@@ -53,6 +60,8 @@ func getServiceVariablesDataSourceSchema() map[string]*schema.Schema {
 	}
 }
 
+// getServiceVariableDataSourceSchema the schema for the `balena_service_variable` data source
+//  sensitive determines whether the value is sensitive or not
 func getServiceVariableDataSourceSchema(sensitive bool) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"service_id": {
@@ -71,7 +80,8 @@ func getServiceVariableDataSourceSchema(sensitive bool) map[string]*schema.Schem
 	}
 }
 
-func DescribeServiceVariables(serviceId int) ([]ServiceVariable, diag.Diagnostics) {
+// ServiceVariablesApiCall actually makes the call to the Balena API to get all variables for a service
+func ServiceVariablesApiCall(serviceId int) ([]ServiceVariable, diag.Diagnostics) {
 	endpoint := fmt.Sprintf("/v7/service_environment_variable?$filter=%s", fmt.Sprintf("service eq %d", serviceId))
 	res, err := client.client.R().Get(endpoint)
 	if err != nil {
@@ -89,9 +99,10 @@ func DescribeServiceVariables(serviceId int) ([]ServiceVariable, diag.Diagnostic
 	return serviceVariables.ServiceVariables, nil
 }
 
+// GetServiceVariablesDataSource is used for the data source and the ReadContext function
 func GetServiceVariablesDataSource(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	serviceId := d.Get("service_id").(int)
-	variables, err := DescribeServiceVariables(serviceId)
+	variables, err := ServiceVariablesApiCall(serviceId)
 	if err != nil {
 		return err
 	}
@@ -107,6 +118,7 @@ func GetServiceVariablesDataSource(_ context.Context, d *schema.ResourceData, _ 
 			}
 			_ = d.Set("variables", variableMap)
 		default:
+			// Only for provider development, to ensure we do not miss an attribute
 			return diag.Errorf("unhandled data source attribute: %s", dataSourceAttribute)
 		}
 	}
@@ -115,12 +127,15 @@ func GetServiceVariablesDataSource(_ context.Context, d *schema.ResourceData, _ 
 	return nil
 }
 
+// GetServiceVariableDataSource to get a single service variable
+// In practice, we still fetch all the service variables
 func GetServiceVariableDataSource(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	serviceId := d.Get("service_id").(int)
 	variableName := d.Get("variable_name").(string)
+
 	var variableValue string
 	found := false
-	variables, err := DescribeServiceVariables(serviceId)
+	variables, err := ServiceVariablesApiCall(serviceId)
 	if err != nil {
 		return err
 	}
@@ -193,7 +208,7 @@ func ResourceServiceVariableCreate(_ context.Context, d *schema.ResourceData, _ 
 	variableName := d.Get("variable_name").(string)
 	variableValue := d.Get("value").(string)
 
-	serviceVariables, err := DescribeServiceVariables(serviceId)
+	serviceVariables, err := ServiceVariablesApiCall(serviceId)
 	if err != nil {
 		return err
 	}
@@ -219,7 +234,7 @@ func ResourceServiceVariableUpdate(_ context.Context, d *schema.ResourceData, _ 
 	variableValue := d.Get("value").(string)
 	found := false
 
-	serviceVariables, err := DescribeServiceVariables(serviceId)
+	serviceVariables, err := ServiceVariablesApiCall(serviceId)
 	if err != nil {
 		return err
 	}
@@ -247,7 +262,7 @@ func ResourceServiceVariableDelete(_ context.Context, d *schema.ResourceData, _ 
 	variableName := d.Get("variable_name").(string)
 	found := false
 
-	serviceVariables, err := DescribeServiceVariables(serviceId)
+	serviceVariables, err := ServiceVariablesApiCall(serviceId)
 	if err != nil {
 		return err
 	}
