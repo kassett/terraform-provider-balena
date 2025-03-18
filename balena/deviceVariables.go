@@ -46,7 +46,7 @@ func DescribeDeviceVariables(deviceUuid string) ([]DeviceVariable, diag.Diagnost
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	if res.StatusCode() != 200 {
+	if !is200Level(res.StatusCode()) {
 		return nil, diag.FromErr(fmt.Errorf("error retrieving Fleet Variables: %s", res.Status()))
 	}
 

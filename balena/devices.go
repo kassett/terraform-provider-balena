@@ -128,8 +128,8 @@ func DescribeDevice(uuid string) (*Device, diag.Diagnostics) {
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	if res.StatusCode() != 200 {
-		return nil, diag.FromErr(fmt.Errorf("error retrieving Device: %s", res.Status()))
+	if !is200Level(res.StatusCode()) {
+		return nil, diag.FromErr(fmt.Errorf("error retrieving Device: %d", res.StatusCode()))
 	}
 
 	var deviceResponse DeviceResponse

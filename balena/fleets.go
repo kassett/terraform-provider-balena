@@ -97,7 +97,7 @@ func DescribeFleet(slug string, fleetId int) (*Fleet, diag.Diagnostics) {
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	if res.StatusCode() != 200 {
+	if !is200Level(res.StatusCode()) {
 		return nil, diag.FromErr(fmt.Errorf("error retrieving Fleet: %s", res.Status()))
 	}
 

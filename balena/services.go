@@ -61,7 +61,7 @@ func DescribeServices(fleetId int) ([]Service, diag.Diagnostics) {
 
 	endpoint := fmt.Sprintf("/v7/service?$filter=%s", fmt.Sprintf("application/app_name eq '%s'", fleet.AppName))
 	res, _ := client.client.R().Get(endpoint)
-	if res.StatusCode() != 200 {
+	if !is200Level(res.StatusCode()) {
 		return nil, diag.FromErr(fmt.Errorf("error retrieving Services: %s", res.Status()))
 	}
 

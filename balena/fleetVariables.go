@@ -9,6 +9,7 @@ import (
 )
 
 type FleetVariable struct {
+	Id      int    `json:"id"`
 	Name    string `json:"name"`
 	Value   string `json:"value"`
 	Created string `json:"created_at"`
@@ -76,7 +77,7 @@ func DescribeFleetVariables(fleetId int) ([]FleetVariable, diag.Diagnostics) {
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	if res.StatusCode() != 200 {
+	if !is200Level(res.StatusCode()) {
 		return nil, diag.FromErr(fmt.Errorf("error retrieving Fleet Variables: %s", res.Status()))
 	}
 
@@ -151,5 +152,170 @@ func GetFleetVariableDataSource(_ context.Context, d *schema.ResourceData, _ int
 	}
 
 	d.SetId(fmt.Sprintf("fleetVariable:%d:%s", fleetId, variableName))
+	return nil
+}
+
+func resourceFleetVariable() *schema.Resource {
+	return privateFleetVariableResource(false)
+}
+
+func resourceFleetVariableSensitive() *schema.Resource {
+	return privateFleetVariableResource(true)
+}
+
+func privateFleetVariableResource(sensitive bool) *schema.Resource {
+	return &schema.Resource{
+		CreateContext: ResourceFleetVariableCreate,
+		UpdateContext: ResourceFleetVariableUpdate,
+		ReadContext:   GetFleetVariableDataSource,
+		DeleteContext: ResourceFleetVariableDelete,
+		Schema: map[string]*schema.Schema{
+			"fleet_id": {
+				Type:     schema.TypeInt,
+				Required: true,
+				ForceNew: true,
+			},
+			"variable_name": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
+			"value": {
+				Type:      schema.TypeString,
+				Required:  true,
+				Sensitive: sensitive,
+			},
+		},
+	}
+}
+
+func ResourceFleetVariableCreate(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
+	fleetId := d.Get("fleet_id").(int)
+	variableName := d.Get("variable_name").(string)
+	variableValue := d.Get("value").(string)
+
+	fleetVariables, err := DescribeFleetVariables(fleetId)
+	if err != nil {
+		return err
+	}
+
+	for _, variable := range fleetVariables {
+		if variableName == variable.Name {
+			return diag.Errorf("variable %s already exists", variableName)
+		}
+	}
+
+	err = CreateFleetVariable(fleetId, variableName, variableValue)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(fmt.Sprintf("fleetVariable:%d:%s", fleetId, variableName))
+	return nil
+}
+
+func ResourceFleetVariableUpdate(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
+	fleetId := d.Get("fleet_id").(int)
+	variableName := d.Get("variable_name").(string)
+	variableValue := d.Get("value").(string)
+	found := false
+
+	fleetVariables, err := DescribeFleetVariables(fleetId)
+	if err != nil {
+		return err
+	}
+
+	for _, variable := range fleetVariables {
+		if variableName == variable.Name {
+			found = true
+			err = UpdateFleetVariable(variable.Id, variableValue)
+			if err != nil {
+				return err
+			}
+			break
+		}
+	}
+
+	if !found {
+		return diag.Errorf("no variable %s configured for the fleet %d", variableName, fleetId)
+	}
+
+	return nil
+}
+
+func ResourceFleetVariableDelete(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
+	fleetId := d.Get("fleet_id").(int)
+	variableName := d.Get("variable_name").(string)
+	found := false
+
+	fleetVariables, err := DescribeFleetVariables(fleetId)
+	if err != nil {
+		return err
+	}
+
+	for _, variable := range fleetVariables {
+		if variableName == variable.Name {
+			found = true
+			err = DeleteFleetVariable(variable.Id)
+			if err != nil {
+				return err
+			}
+			break
+		}
+	}
+
+	if !found {
+		return diag.Errorf("no variable %s configured for the fleet %d", variableName, fleetId)
+	}
+
+	return nil
+
+}
+
+func CreateFleetVariable(fleetId int, variableName string, variableValue string) diag.Diagnostics {
+	res, err := client.client.R().
+		SetBody(map[string]interface{}{
+			"application": fleetId,
+			"name":        variableName,
+			"value":       variableValue,
+		}).
+		Post("/v7/application_environment_variable")
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if !is200Level(res.StatusCode()) {
+		return diag.FromErr(fmt.Errorf("error creating fleet variable with statuscode %d", res.StatusCode()))
+	}
+	return nil
+}
+
+func UpdateFleetVariable(fleetVariableId int, variableValue string) diag.Diagnostics {
+	res, err := client.client.R().
+		SetBody(map[string]interface{}{
+			"value": variableValue,
+		}).
+		Patch(fmt.Sprintf("/v7/application_environment_variable(%d)", fleetVariableId))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if !is200Level(res.StatusCode()) {
+		return diag.FromErr(fmt.Errorf("error updating fleet variable with statuscode %d", res.StatusCode()))
+	}
+
+	return nil
+}
+
+func DeleteFleetVariable(fleetVariableId int) diag.Diagnostics {
+	res, err := client.client.R().Delete(fmt.Sprintf("/v7/application_environment_variable(%d)", fleetVariableId))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if !is200Level(res.StatusCode()) {
+		return diag.FromErr(fmt.Errorf("error deleting fleet variable with statuscode %d", res.StatusCode()))
+	}
 	return nil
 }
