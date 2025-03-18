@@ -18,6 +18,10 @@ type ServicesResponse struct {
 	Services []Service `json:"d"`
 }
 
+func GetServicesId(fleetId int) string {
+	return fmt.Sprintf("services:%d", fleetId)
+}
+
 func dataSourceServices() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServicesDataSource,
@@ -74,7 +78,8 @@ func DescribeServices(fleetId int) ([]Service, diag.Diagnostics) {
 }
 
 func GetServicesDataSource(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
-	services, err := DescribeServices(d.Get("fleet_id").(int))
+	fleetId := d.Get("fleet_id").(int)
+	services, err := DescribeServices(fleetId)
 	if err != nil {
 		return err
 	}
@@ -100,6 +105,6 @@ func GetServicesDataSource(_ context.Context, d *schema.ResourceData, _ interfac
 		}
 	}
 
-	d.SetId(fmt.Sprintf("services:%d", d.Get("fleet_id").(int)))
+	d.SetId(GetServicesId(fleetId))
 	return err
 }

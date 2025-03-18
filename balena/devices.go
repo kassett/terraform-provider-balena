@@ -36,6 +36,10 @@ type DeviceResponse struct {
 	Devices []Device `json:"d"`
 }
 
+func GetDeviceId(deviceUuid string) string {
+	return fmt.Sprintf("device:%s", deviceUuid)
+}
+
 func getDeviceDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"uuid": {
@@ -204,6 +208,6 @@ func GetDeviceDataSource(_ context.Context, d *schema.ResourceData, _ interface{
 		}
 	}
 
-	d.SetId(fmt.Sprintf("device:%s", device.Uuid))
+	d.SetId(GetDeviceId(device.Uuid))
 	return nil
 }

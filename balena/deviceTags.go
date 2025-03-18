@@ -18,6 +18,10 @@ type DeviceTagResponse struct {
 	Tags []DeviceTag `json:"d"`
 }
 
+func GetDeviceTagsId(deviceUuid string) string {
+	return fmt.Sprintf("device-tags:%s", deviceUuid)
+}
+
 func dataSourceDeviceTags() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetDeviceTagsDataSource,
@@ -82,6 +86,6 @@ func GetDeviceTagsDataSource(_ context.Context, d *schema.ResourceData, _ interf
 		}
 	}
 
-	d.SetId(fmt.Sprintf("deviceTags:%s", deviceUuid))
+	d.SetId(GetDeviceTagsId(deviceUuid))
 	return nil
 }

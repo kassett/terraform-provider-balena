@@ -22,6 +22,14 @@ type ServiceVariableResponse struct {
 	ServiceVariables []ServiceVariable `json:"d"`
 }
 
+func GetSingularServiceVariableID(serviceId int, variableName string) string {
+	return fmt.Sprintf("service-variable:%d:%s", serviceId, variableName)
+}
+
+func GetPluralServiceVariableID(serviceId int) string {
+	return fmt.Sprintf("service-variable:%d", serviceId)
+}
+
 // dataSourceServiceVariable the schema of a single service variable
 func dataSourceServiceVariable() *schema.Resource {
 	return &schema.Resource{
@@ -61,7 +69,8 @@ func getServiceVariablesDataSourceSchema() map[string]*schema.Schema {
 }
 
 // getServiceVariableDataSourceSchema the schema for the `balena_service_variable` data source
-//  sensitive determines whether the value is sensitive or not
+//
+//	sensitive determines whether the value is sensitive or not
 func getServiceVariableDataSourceSchema(sensitive bool) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"service_id": {
@@ -123,7 +132,7 @@ func GetServiceVariablesDataSource(_ context.Context, d *schema.ResourceData, _ 
 		}
 	}
 
-	d.SetId(fmt.Sprintf("serviceVariables:%d", serviceId))
+	d.SetId(GetPluralServiceVariableID(serviceId))
 	return nil
 }
 
@@ -165,7 +174,7 @@ func GetServiceVariableDataSource(_ context.Context, d *schema.ResourceData, _ i
 		}
 	}
 
-	d.SetId(fmt.Sprintf("serviceVariable:%d:%s", serviceId, variableName))
+	d.SetId(GetSingularServiceVariableID(serviceId, variableName))
 	return nil
 }
 

@@ -27,6 +27,10 @@ type FleetResponse struct {
 	Fleets []Fleet `json:"d"`
 }
 
+func GetFleetId(fleetId int) string {
+	return fmt.Sprintf("fleet:%d", fleetId)
+}
+
 func getFleetDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"fleet_id": {
@@ -164,6 +168,6 @@ func GetFleetDataSource(_ context.Context, d *schema.ResourceData, _ interface{}
 		}
 	}
 
-	d.SetId(fmt.Sprintf("fleet:%d", fleet.FleetID))
+	d.SetId(GetFleetId(fleet.FleetID))
 	return nil
 }

@@ -19,6 +19,14 @@ type FleetVariablesResponse struct {
 	FleetVariables []FleetVariable `json:"d"`
 }
 
+func GetSingularFleetVariableId(fleetId int, variableName string) string {
+	return fmt.Sprintf("fleet-variable:%d:%s", fleetId, variableName)
+}
+
+func GetPluralFleetVariableId(fleetId int) string {
+	return fmt.Sprintf("fleet-variable:%d", fleetId)
+}
+
 func dataSourceFleetVariable() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetVariableDataSource,
@@ -112,7 +120,7 @@ func GetFleetVariablesDataSource(_ context.Context, d *schema.ResourceData, _ in
 
 	}
 
-	d.SetId(fmt.Sprintf("fleetVariables:%d", d.Get("fleet_id").(int)))
+	d.SetId(GetPluralFleetVariableId(fleetId))
 	return nil
 }
 
@@ -151,7 +159,7 @@ func GetFleetVariableDataSource(_ context.Context, d *schema.ResourceData, _ int
 		}
 	}
 
-	d.SetId(fmt.Sprintf("fleetVariable:%d:%s", fleetId, variableName))
+	d.SetId(GetSingularFleetVariableId(fleetId, variableName))
 	return nil
 }
 
