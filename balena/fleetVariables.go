@@ -218,7 +218,7 @@ func ResourceFleetVariableCreate(_ context.Context, d *schema.ResourceData, _ in
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("fleetVariable:%d:%s", fleetId, variableName))
+	d.SetId(GetSingularFleetVariableId(fleetId, variableName))
 	return nil
 }
 

@@ -22,7 +22,7 @@ type ServiceVariableResponse struct {
 	ServiceVariables []ServiceVariable `json:"d"`
 }
 
-func GetSingularServiceVariableID(serviceId int, variableName string) string {
+func GetSingularServiceVariableId(serviceId int, variableName string) string {
 	return fmt.Sprintf("service-variable:%d:%s", serviceId, variableName)
 }
 
@@ -174,7 +174,7 @@ func GetServiceVariableDataSource(_ context.Context, d *schema.ResourceData, _ i
 		}
 	}
 
-	d.SetId(GetSingularServiceVariableID(serviceId, variableName))
+	d.SetId(GetSingularServiceVariableId(serviceId, variableName))
 	return nil
 }
 
@@ -233,7 +233,7 @@ func ResourceServiceVariableCreate(_ context.Context, d *schema.ResourceData, _ 
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("serviceVariable:%d:%s", serviceId, variableName))
+	d.SetId(GetSingularServiceVariableId(serviceId, variableName))
 	return nil
 }
 
