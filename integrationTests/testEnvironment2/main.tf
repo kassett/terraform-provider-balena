@@ -10,7 +10,7 @@ terraform {
 }
 
 data "balena_device" "this" {
-  uuid = "d8262387f955b30572d79a6fd2fa78b4"
+  uuid = "a-random-uuid-for-a-device"
 }
 
 data "balena_services" "this" {

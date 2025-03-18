@@ -58,7 +58,7 @@ func getServicesDataSourceSchema() map[string]*schema.Schema {
 }
 
 func DescribeServices(fleetId int) ([]Service, diag.Diagnostics) {
-	fleet, err := DescribeFleet("", fleetId)
+	fleet, err := FetchFleet("", fleetId)
 	if err != nil {
 		return nil, err
 	}

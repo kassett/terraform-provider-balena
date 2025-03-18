@@ -26,23 +26,26 @@ func dataSourceDeviceTags() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetDeviceTagsDataSource,
 		Schema:      getDeviceTagsDataSourceSchema(),
+		Description: "Get all device tags for a given device UUID.",
 	}
 }
 
 func getDeviceTagsDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"device_uuid": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The UUID of the device for which the tags are being requested.",
 		},
 		"tags": {
-			Type:     schema.TypeMap,
-			Computed: true,
+			Type:        schema.TypeMap,
+			Computed:    true,
+			Description: "A key-value pair of device tags.",
 		},
 	}
 }
 
-func DescribeDeviceTags(uuid string) ([]DeviceTag, diag.Diagnostics) {
+func FetchDeviceTags(uuid string) ([]DeviceTag, diag.Diagnostics) {
 	endpoint := fmt.Sprintf("/v7/device_tag?$filter=%s", fmt.Sprintf("device/uuid eq '%s'", uuid))
 	res, err := client.client.R().Get(endpoint)
 	if err != nil || (res != nil && !is200Level(res.StatusCode())) {
@@ -66,7 +69,7 @@ func DescribeDeviceTags(uuid string) ([]DeviceTag, diag.Diagnostics) {
 func GetDeviceTagsDataSource(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	deviceUuid := d.Get("device_uuid").(string)
 
-	tags, err := DescribeDeviceTags(deviceUuid)
+	tags, err := FetchDeviceTags(deviceUuid)
 	if err != nil {
 		return err
 	}

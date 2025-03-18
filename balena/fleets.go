@@ -36,39 +36,46 @@ func getFleetDataSourceSchema() map[string]*schema.Schema {
 		"fleet_id": {
 			Type:          schema.TypeInt,
 			Optional:      true,
+			Description:   "The ID of a fleet (also called application).",
 			ConflictsWith: []string{"slug"},
 			Default:       -1,
 		},
 		"slug": {
 			Type:          schema.TypeString,
 			Optional:      true,
+			Description:   "The slug of a fleet (also called application).",
 			ConflictsWith: []string{"fleet_id"},
 			Default:       "",
 		},
 		"device_type_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
-			Optional: true,
+			Type:        schema.TypeInt,
+			Description: "The ID of the device type configured for this fleet. These IDs can be retrieved via the `device_type` API.",
+			Computed:    true,
 		},
 		"app_name": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The app name of the fleet -- mostly corresponds with `slug`.",
+			Computed:    true,
 		},
 		"track_latest_release": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Description: "Whether the fleet is configured to track the latest release.",
+			Computed:    true,
 		},
 		"release_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of a release configured for this fleet.",
 		},
 		"organization_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of the organization this fleet belongs to.",
 		},
 		"public": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Computed:    true,
+			Description: "Whether the fleet is publicly available.",
 		},
 		"host": {
 			Type:     schema.TypeBool,
@@ -79,17 +86,19 @@ func getFleetDataSourceSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 		"created": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the fleet was created, representing as an ISO-Format string.",
 		},
 		"uuid": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The UUID of the fleet - remains to be seen if this value is used anywhere by Balena.",
 		},
 	}
 }
 
-func DescribeFleet(slug string, fleetId int) (*Fleet, diag.Diagnostics) {
+func FetchFleet(slug string, fleetId int) (*Fleet, diag.Diagnostics) {
 	var endpoint string
 	if slug != "" {
 		endpoint = fmt.Sprintf("/v7/application(slug='%s')", slug)
@@ -122,6 +131,7 @@ func dataSourceFleet() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetDataSource,
 		Schema:      getFleetDataSourceSchema(),
+		Description: "Retrieve information about a Fleet given its `fleet_id` or `slug`.",
 	}
 }
 
@@ -132,7 +142,7 @@ func GetFleetDataSource(_ context.Context, d *schema.ResourceData, _ interface{}
 		return diag.Errorf("either fleet_id or slug must be specified")
 	}
 
-	fleet, err := DescribeFleet(d.Get("slug").(string), d.Get("fleet_id").(int))
+	fleet, err := FetchFleet(d.Get("slug").(string), d.Get("fleet_id").(int))
 	if err != nil {
 		return err
 	}

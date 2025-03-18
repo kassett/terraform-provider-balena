@@ -43,90 +43,107 @@ func GetDeviceId(deviceUuid string) string {
 func getDeviceDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"uuid": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The UUID of the device. This value is unique across all fleets.",
 		},
 		"device_name": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The display name of the device. This value is unique within a fleet -- the device is only aware of the display name when bootstrapped.",
 		},
 		"last_vpn_event": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The last vpn event of the device",
 		},
 		"last_connectivity_event": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The last connectivity event of the device",
 		},
 		"ip_address": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The IP address of the device on the local area network.",
 		},
 		"mac_addresses": {
 			Type: schema.TypeList,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
-			Computed: true,
+			Computed:    true,
+			Description: "The MAC addresses of the device.",
 		},
 		"public_ip_address": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The public IP address of the network.",
 		},
 		"supervisor_version": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The supervisor version on the device.",
 		},
 		"os_version": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The OS version on the device.",
 		},
 		"longitude": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The longitude of the device. If the device is using a proxy, the longitude will be of the proxy.",
 		},
 		"latitude": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The longitude of the device. If the device is using a proxy, the latitude will be of the proxy.",
 		},
 		"custom_longitude": {
-			Type:     schema.TypeString,
-			Computed: true,
-			Optional: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The custom longitude of the device. This will return null if never set.",
 		},
 		"custom_latitude": {
-			Type:     schema.TypeString,
-			Computed: true,
-			Optional: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The custom latitude of the device. This will return null if never set.",
 		},
 		"device_type_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of the device type. These IDs can be retrieved via the `device_type` API.",
 		},
 		"fleet_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of the fleet. More information on the fleet can be found in the `balena_fleet` data source.",
 		},
 		"description": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The description of the device, representing the `note` field returned by the API.",
 		},
 		"created": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The time the device was created, represented as a string in ISO-Format.",
 		},
 		"running_release_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of the running release of the device.",
 		},
 		"pinned_release_id": {
-			Type:     schema.TypeInt,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Computed:    true,
+			Description: "The ID of the pinned release of the device. If the device is tracking latest, this ID will be null.",
 		},
 	}
 }
 
-func DescribeDevice(uuid string) (*Device, diag.Diagnostics) {
+func FetchDevice(uuid string) (*Device, diag.Diagnostics) {
 	endpoint := fmt.Sprintf("/v7/device(uuid='%s')", uuid)
 	res, err := client.client.R().Get(endpoint)
 	if err != nil {
@@ -154,11 +171,12 @@ func dataSourceDevice() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetDeviceDataSource,
 		Schema:      getDeviceDataSourceSchema(),
+		Description: "This data source provides information about a device given its unique UUID.",
 	}
 }
 
 func GetDeviceDataSource(_ context.Context, d *schema.ResourceData, _ interface{}) diag.Diagnostics {
-	device, err := DescribeDevice(d.Get("uuid").(string))
+	device, err := FetchDevice(d.Get("uuid").(string))
 	if err != nil {
 		return err
 	}
