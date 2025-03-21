@@ -2,8 +2,6 @@ name: Merge to main
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*"
 
