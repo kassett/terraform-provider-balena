@@ -35,6 +35,7 @@ func dataSourceServiceVariable() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariableDataSource,
 		Schema:      getServiceVariableDataSourceSchema(false),
+		Description: "The name of a single service variable.",
 	}
 }
 
@@ -43,6 +44,7 @@ func dataSourceServiceVariableSensitive() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariableDataSource,
 		Schema:      getServiceVariableDataSourceSchema(true),
+		Description: "The name of a single service variable, the value being sensitive.",
 	}
 }
 
@@ -51,6 +53,7 @@ func dataSourceServiceVariables() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetServiceVariablesDataSource,
 		Schema:      getServiceVariablesDataSourceSchema(),
+		Description: "All service variables for a particular service.",
 	}
 }
 
@@ -58,12 +61,14 @@ func dataSourceServiceVariables() *schema.Resource {
 func getServiceVariablesDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"service_id": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "The ID of the service to which the variables are stored.",
 		},
 		"variables": {
-			Type:     schema.TypeMap,
-			Computed: true,
+			Type:        schema.TypeMap,
+			Computed:    true,
+			Description: "The key-values of all service variables.",
 		},
 	}
 }
@@ -74,17 +79,20 @@ func getServiceVariablesDataSourceSchema() map[string]*schema.Schema {
 func getServiceVariableDataSourceSchema(sensitive bool) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"service_id": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "The ID of the service to which the variable is stored.",
 		},
 		"variable_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the single service variable.",
 		},
 		"value": {
-			Type:      schema.TypeString,
-			Computed:  true,
-			Sensitive: sensitive,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Sensitive:   sensitive,
+			Description: "The value of the single service variable.",
 		},
 	}
 }
@@ -194,19 +202,22 @@ func privateServiceVariableResource(sensitive bool) *schema.Resource {
 		DeleteContext: ResourceServiceVariableDelete,
 		Schema: map[string]*schema.Schema{
 			"service_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The ID of the service to which the variables are stored.",
 			},
 			"variable_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The name of the single service variable.",
 			},
 			"value": {
-				Type:      schema.TypeString,
-				Required:  true,
-				Sensitive: sensitive,
+				Type:        schema.TypeString,
+				Required:    true,
+				Sensitive:   sensitive,
+				Description: "The value of the single service variable.",
 			},
 		},
 	}

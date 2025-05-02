@@ -78,12 +78,14 @@ func getFleetDataSourceSchema() map[string]*schema.Schema {
 			Description: "Whether the fleet is publicly available.",
 		},
 		"host": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Computed:    true,
+			Description: "Unclear", // TODO Understand what this means
 		},
 		"archived": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Computed:    true,
+			Description: "Whether the fleet is archived.",
 		},
 		"created": {
 			Type:        schema.TypeString,

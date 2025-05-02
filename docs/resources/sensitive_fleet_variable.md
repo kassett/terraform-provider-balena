@@ -17,9 +17,9 @@ description: |-
 
 ### Required
 
-- `fleet_id` (Number)
-- `value` (String, Sensitive)
-- `variable_name` (String)
+- `fleet_id` (Number) Fleet ID.
+- `value` (String, Sensitive) Fleet variable value.
+- `variable_name` (String) Fleet variable name.
 
 ### Read-Only
 

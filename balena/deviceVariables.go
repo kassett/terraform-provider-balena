@@ -20,22 +20,26 @@ type DeviceVariablesResponse struct {
 	DeviceVariables []DeviceVariable `json:"d"`
 }
 
+// TODO Not publishing this until I understand the precedence of Device / Fleet / Config variables
 func dataSourceDeviceVariables() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetDeviceVariablesDataSource,
 		Schema:      getDeviceVariablesDataSourceSchema(),
+		Description: "Get device variables for a given device UUID",
 	}
 }
 
 func getDeviceVariablesDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"device_uuid": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The UUID of the device. This value is unique across all fleets.",
 		},
 		"variables": {
-			Type:     schema.TypeMap,
-			Computed: true,
+			Type:        schema.TypeMap,
+			Computed:    true,
+			Description: "The variables for the device, with keys being the variable names and values being their values.",
 		},
 	}
 }

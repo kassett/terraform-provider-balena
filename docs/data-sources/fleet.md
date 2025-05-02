@@ -23,10 +23,10 @@ Retrieve information about a Fleet given its `fleet_id` or `slug`.
 ### Read-Only
 
 - `app_name` (String) The app name of the fleet -- mostly corresponds with `slug`.
-- `archived` (Boolean)
+- `archived` (Boolean) Whether the fleet is archived.
 - `created` (String) Timestamp of when the fleet was created, representing as an ISO-Format string.
 - `device_type_id` (Number) The ID of the device type configured for this fleet. These IDs can be retrieved via the `device_type` API.
-- `host` (Boolean)
+- `host` (Boolean) Unclear
 - `id` (String) The ID of this resource.
 - `organization_id` (Number) The ID of the organization this fleet belongs to.
 - `public` (Boolean) Whether the fleet is publicly available.

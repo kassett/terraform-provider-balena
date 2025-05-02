@@ -37,9 +37,10 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"balena_token_path": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  getBalenaTokenDir(),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The path to the balena token on the local machine.",
+				Default:     getBalenaTokenDir(),
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
 					path := v.(string)
 					if path == "" {
@@ -53,9 +54,10 @@ func Provider() *schema.Provider {
 				},
 			},
 			"balena_url": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "https://api.balena-cloud.com/",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "https://api.balena-cloud.com/",
+				Description: "The base URL of the Balena API.",
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
 					url := v.(string)
 					if url == "" {
@@ -69,6 +71,7 @@ func Provider() *schema.Provider {
 			},
 			"use_env_var": {
 				Type:        schema.TypeBool,
+				Description: "Use BALENA_API_KEY environment variable.",
 				Optional:    true,
 				Default:     false,
 				DefaultFunc: schema.EnvDefaultFunc("BALENA_API_KEY", nil),
