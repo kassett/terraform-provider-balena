@@ -31,8 +31,9 @@ func dataSourceServices() *schema.Resource {
 func getServicesDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"fleet_id": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "Fleet ID.",
 		},
 		"services": {
 			Type:     schema.TypeList,
@@ -40,16 +41,19 @@ func getServicesDataSourceSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"name": {
-						Type:     schema.TypeString,
-						Computed: true,
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "Name of the service.",
 					},
 					"service_id": {
-						Type:     schema.TypeInt,
-						Computed: true,
+						Type:        schema.TypeInt,
+						Computed:    true,
+						Description: "ID of the service.",
 					},
 					"created": {
-						Type:     schema.TypeString,
-						Computed: true,
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "Date when the service was created, represented as an ISO-Format string.",
 					},
 				},
 			},

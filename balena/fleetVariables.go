@@ -31,6 +31,7 @@ func dataSourceFleetVariable() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetVariableDataSource,
 		Schema:      getFleetVariableDataSourceSchema(false),
+		Description: "Get a single variable for a given Fleet UUID.",
 	}
 }
 
@@ -38,6 +39,7 @@ func dataSourceFleetVariableSensitive() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetVariableDataSource,
 		Schema:      getFleetVariableDataSourceSchema(true),
+		Description: "Get a single variable for a given Fleet UUID, represented as a sensitive string.",
 	}
 }
 
@@ -45,23 +47,27 @@ func dataSourceFleetVariables() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: GetFleetVariablesDataSource,
 		Schema:      getFleetVariablesDataSourceSchema(),
+		Description: "Get all variables for a given Fleet UUID.",
 	}
 }
 
 func getFleetVariableDataSourceSchema(sensitive bool) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"fleet_id": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "Fleet ID",
 		},
 		"variable_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Fleet variable name.",
 		},
 		"value": {
-			Type:      schema.TypeString,
-			Computed:  true,
-			Sensitive: sensitive,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Sensitive:   sensitive,
+			Description: "Fleet variable value.",
 		},
 	}
 }
@@ -69,12 +75,14 @@ func getFleetVariableDataSourceSchema(sensitive bool) map[string]*schema.Schema 
 func getFleetVariablesDataSourceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"fleet_id": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "Fleet ID.",
 		},
 		"variables": {
-			Type:     schema.TypeMap,
-			Computed: true,
+			Type:        schema.TypeMap,
+			Computed:    true,
+			Description: "Fleet variables in JSON format.",
 		},
 	}
 }
@@ -179,19 +187,22 @@ func privateFleetVariableResource(sensitive bool) *schema.Resource {
 		DeleteContext: ResourceFleetVariableDelete,
 		Schema: map[string]*schema.Schema{
 			"fleet_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Fleet ID.",
 			},
 			"variable_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Fleet variable name.",
 			},
 			"value": {
-				Type:      schema.TypeString,
-				Required:  true,
-				Sensitive: sensitive,
+				Type:        schema.TypeString,
+				Required:    true,
+				Sensitive:   sensitive,
+				Description: "Fleet variable value.",
 			},
 		},
 	}
