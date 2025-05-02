@@ -17,9 +17,9 @@ description: |-
 
 ### Required
 
-- `service_id` (Number)
-- `value` (String)
-- `variable_name` (String)
+- `service_id` (Number) The ID of the service to which the variables are stored.
+- `value` (String) The value of the single service variable.
+- `variable_name` (String) The name of the single service variable.
 
 ### Read-Only
 

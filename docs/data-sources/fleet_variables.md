@@ -3,12 +3,12 @@
 page_title: "balena_fleet_variables Data Source - terraform-provider-balena"
 subcategory: ""
 description: |-
-  
+  Get all variables for a given Fleet UUID.
 ---
 
 # balena_fleet_variables (Data Source)
 
-
+Get all variables for a given Fleet UUID.
 
 
 
@@ -17,9 +17,9 @@ description: |-
 
 ### Required
 
-- `fleet_id` (Number)
+- `fleet_id` (Number) Fleet ID.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `variables` (Map of String)
+- `variables` (Map of String) Fleet variables in JSON format.

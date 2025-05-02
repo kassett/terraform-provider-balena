@@ -3,12 +3,12 @@
 page_title: "balena_service_variables Data Source - terraform-provider-balena"
 subcategory: ""
 description: |-
-  
+  All service variables for a particular service.
 ---
 
 # balena_service_variables (Data Source)
 
-
+All service variables for a particular service.
 
 
 
@@ -17,9 +17,9 @@ description: |-
 
 ### Required
 
-- `service_id` (Number)
+- `service_id` (Number) The ID of the service to which the variables are stored.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `variables` (Map of String)
+- `variables` (Map of String) The key-values of all service variables.

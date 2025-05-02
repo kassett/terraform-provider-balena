@@ -17,6 +17,6 @@ description: |-
 
 ### Optional
 
-- `balena_token_path` (String)
-- `balena_url` (String)
-- `use_env_var` (Boolean)
+- `balena_token_path` (String) The path to the balena token on the local machine.
+- `balena_url` (String) The base URL of the Balena API.
+- `use_env_var` (Boolean) Use BALENA_API_KEY environment variable.

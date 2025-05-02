@@ -17,7 +17,7 @@ description: |-
 
 ### Required
 
-- `fleet_id` (Number)
+- `fleet_id` (Number) Fleet ID.
 
 ### Read-Only
 

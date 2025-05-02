@@ -3,12 +3,12 @@
 page_title: "balena_sensitive_fleet_variable Data Source - terraform-provider-balena"
 subcategory: ""
 description: |-
-  
+  Get a single variable for a given Fleet UUID, represented as a sensitive string.
 ---
 
 # balena_sensitive_fleet_variable (Data Source)
 
-
+Get a single variable for a given Fleet UUID, represented as a sensitive string.
 
 
 
@@ -17,10 +17,10 @@ description: |-
 
 ### Required
 
-- `fleet_id` (Number)
-- `variable_name` (String)
+- `fleet_id` (Number) Fleet ID
+- `variable_name` (String) Fleet variable name.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `value` (String, Sensitive)
+- `value` (String, Sensitive) Fleet variable value.

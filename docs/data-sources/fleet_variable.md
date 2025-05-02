@@ -3,12 +3,12 @@
 page_title: "balena_fleet_variable Data Source - terraform-provider-balena"
 subcategory: ""
 description: |-
-  
+  Get a single variable for a given Fleet UUID.
 ---
 
 # balena_fleet_variable (Data Source)
 
-
+Get a single variable for a given Fleet UUID.
 
 
 
@@ -17,10 +17,10 @@ description: |-
 
 ### Required
 
-- `fleet_id` (Number)
-- `variable_name` (String)
+- `fleet_id` (Number) Fleet ID
+- `variable_name` (String) Fleet variable name.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `value` (String)
+- `value` (String) Fleet variable value.
